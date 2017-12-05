@@ -11,9 +11,9 @@ var Population = function(size) {
 }
 
 // initialization of the Population by making a pass of the fitness function
-Population.prototype.initialize = function() {
+Population.prototype.initialize = function(weightlimit) {
   for (var i = 0; i < this.genes.length; i++) {
-    this.genes[i].calcFitness();
+    this.genes[i].calcFitness(weightlimit);
   }
 }
 
@@ -22,6 +22,11 @@ Population.prototype.select = function() {
   // sort and select the best
   this.genes.sort(compareFitness);
   return [this.genes[0], this.genes[1]];
+}
+
+//Compare fitness
+function compareFitness(gene1, gene2) {
+  return gene2.fitness - gene1.fitness;
 }
 
 //the core genetic algorithm (cross over, mutation, selection)
@@ -53,7 +58,7 @@ Population.prototype.generate = function() {
   //recalculate fitness after cross-over & mutation:
   this.initialize();
   this.genes.sort(compareFitness);
-  this.solution = population.genes[0].fitness; // pick the solution;
+  this.solution = this.genes[0].fitness; // pick the solution;
 
   //draw the population:
   display();
@@ -72,8 +77,8 @@ Population.prototype.generate = function() {
 function display(){
   var fitness = document.getElementById('fitness');
   //print the best total Survival point and the corresponding genotype:
-  fitness.innerHTML = 'Survival Points:' + population.genes[0].fitness;
-  fitness.innerHTML += '<br/>Genotype:' + population.genes[0].genotype;
+  fitness.innerHTML = 'Survival Points:' + this.genes[0].fitness;
+  fitness.innerHTML += '<br/>Genotype:' + this.genes[0].genotype;
 
   context.clearRect(0, 0, canvas.width, canvas.height); //clear the canvas
   var index = 0;
@@ -86,7 +91,7 @@ function display(){
       context.beginPath();
       context.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
       // pick the fitness for opacity calculation;
-      var opacity = population.genes[index].fitness / maxSurvivalPoints;
+      var opacity = this.population.genes[index].fitness / maxSurvivalPoints;
       context.fillStyle = 'rgba(0,0,255, ' + opacity + ')';
       context.fill();
       context.stroke();
@@ -94,7 +99,7 @@ function display(){
       context.textAlign = 'center';
       context.font = 'bold 12pt Calibri';
       // print the generation number
-      context.fillText(population.genes[index].generation, centerX, centerY);
+      context.fillText(this.population.genes[index].generation, centerX, centerY);
       index++;
     }
   }

@@ -1,19 +1,20 @@
-var Gene = function() {
+var Gene = function(weightlimit) {
   this.genotype;
   this.fitness;
   this.generation = 0;
+  this.weightlimit = weightlimit;
 }
 
 // converts a phenotype to a genotype
 Gene.prototype.encode = function(phenotype) {
   this.genotype = Array(phenotype.length).fill(0);
   var totalWeight = 0;
-  while (totalWeight < weightlimit) { // make a genotype until criteria is met
+  while (totalWeight < this.weightlimit) { // make a genotype until criteria is met
     // pick an item at random
     var index = Math.floor(Math.random() * items.length);
     index = index == items.length ? index - 1 : index;
     totalWeight += items[index].weight;
-    if (totalWeight >= weightlimit) { // break if weight limit exceeded
+    if (totalWeight >= this.weightlimit) { // break if weight limit exceeded
       break;
     }
 
@@ -45,7 +46,7 @@ Gene.prototype.calcFitness = function() {
   var totalWeight = selectedItems.reduce(sumWeights, 0);
 
   //penalty if > weightlimit => 0
-  if (totalWeight > weightlimit) {
+  if (totalWeight > this.weightlimit) {
     this.fitness = 0;
   }
 }
