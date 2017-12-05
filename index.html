@@ -1,137 +1,21 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <title>Genetic Algorithm in JavaScript</title>
+    <title>Hello Genetics-js</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
   </head>
   <body>
-    <script type="text/javascript">
-      var a = Math;
-      var b = 'Hello, World!';
-      var randomLetter = function () {
-        var letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghjiklmnopqrstuvwxyz,! ';
-        return letters.charAt(a.floor((a.random()*letters.length)));
-      }
+    <h1>Starting out!</h1>
 
-      var similarString = function (x, y) {
-        count = 0;
-        for (var i = 0; i < 13; i++) {
-          count -= Math.abs(x.charCodeAt(i)-y.charCodeAt(i));
-          if (x.substring(i, i+1) == y.substring(i, i+1)) {
-            count += 100;
-          }
-        }
-        return count;
-      }
-      
-      var cycle = 20;
-      var first = true;
-      var found = false;
-      var abc = 1;
-      var top1, top2, top1score, top2score, i, strings, stop;
-      var total = 0;
-      var finaloutput = '';
-      function go() {
-        var i, j, outputstrings = [];
-        if (first) {
-          first = false;
-          strings = [];
-          for (i = 0; i < cycle; i++) {
-            var str = '';
-            for (j = 0; j < 13; j++)
-              str += randomLetter();
-              
-            strings[i] = str;
-            outputstrings[i] = '<span style="color: #009E28">'+str+'</span>';
-          }
-        } else {
-          // Generate new strings
-          for (i = 0; i < cycle; i++) {
-            if (i == 10) {
-              // Swap strings
-              var tmp = top1;
-              top1 = top2;
-              top2 = tmp;
-            }
-            splitAt = a.floor(a.random()*13);
-            strings[i] = top1.substring(0, splitAt)+top2.substring(splitAt, 13);
-    
-            if (Math.random() < 0.75) {
-              mutateAt = a.floor(a.random()*13)+1;
-              strings[i] = strings[i].substring(0, mutateAt-1)+randomLetter()+strings[i].substring(mutateAt, 13)
-              var os = '';
-              if (mutateAt <= splitAt) {
-                // split first
-                if (i < 10)
-                  os = top1.substring(0, splitAt)+'</span><span style="color: #009E28">'+top2.substring(splitAt, 13);
-                else
-                  os = top1.substring(0, splitAt)+'</span><span style="color: #9E0028">'+top2.substring(splitAt, 13);
-
-                os = os.substring(0, mutateAt-1)+'<span style="background-color: #FFFFB3">'+strings[i].charAt(mutateAt-1)+'</span>'+os.substring(mutateAt, os.length);
-//os = strings[i]+"-"+os;
-
-              } else {
-                // mutate first
-                os = strings[i].substring(0, mutateAt-1)+'<span style="background-color: #FFFFB3">'+strings[i].charAt(mutateAt-1)+'</span>'+strings[i].substring(mutateAt, 13)
-                if (i < 10)
-                  os = os.substring(0, splitAt)+'</span><span style="color: #009E28">'+os.substring(splitAt, os.length);
-                else
-                  os = os.substring(0, splitAt)+'</span><span style="color: #9E0028">'+os.substring(splitAt, os.length);
-//os = strings[i]+"+"+os;
-              }
-              if (i < 10)
-                outputstrings[i] = '<span style="color: #9E0028">'+os+'</span>';
-              else
-                outputstrings[i] = '<span style="color: #009E28">'+os+'</span>';
-
-            } else {
-              if (i < 10)
-                outputstrings[i] = '<span style="color: #9E0028">'+top1.substring(0, splitAt)+'</span><span style="color: #009E28">'+top2.substring(splitAt, 13)+'</span>';
-              else
-                outputstrings[i] = '<span style="color: #009E28">'+top1.substring(0, splitAt)+'</span><span style="color: #9E0028">'+top2.substring(splitAt, 13)+'</span>';
-            }
-          }
-        }
-        total += cycle;
-        top1 = strings[0];
-        top2 = strings[1];
-        top1score = top2score = -10000;
-
-        // Find top 2
-        for (i = 0; i < cycle; i++) {
-          score = similarString(strings[i], b);
-          if (score > top1score) {
-            top1 = strings[i];
-            top1score = score;
-            if (top1 == "Hello, World!") {
-              document.getElementById('output').innerHTML = b;
-              total = (total - cycle) + i;
-              document.getElementById('stats').innerHTML = total+" strings genetically engineered";
-              finaloutput = document.getElementById('all').innerHTML+finaloutput;
-              document.getElementById('all').innerHTML = '<pre style="width: 45em; margin: 20px auto; text-align: center"><span style="color: #9E0028">'+top1+'</span> <span style="color: #009E28">'+top2+'</span></pre>'+
-                '<pre style="-moz-column-width: 10em;-webkit-column-width: 10em;-moz-column-gap: 1em;-webkit-column-gap: 1em; width: 45em; text-align: center; margin: 20px auto;">'+outputstrings.join('\n')+'</pre>';
-              setTimeout(function () { document.getElementById('all').innerHTML = document.getElementById('all').innerHTML+finaloutput }, 50);
-
-              clearInterval(stop);
-              return;
-            }
-          } else if (score > top2score) {
-            top2 = strings[i];
-            top2score = score;
-          }
-        }
-        
-        document.getElementById('output').innerHTML = top1;
-        finaloutput = document.getElementById('all').innerHTML+finaloutput;
-        document.getElementById('all').innerHTML = '<pre style="width: 45em; margin: 20px auto; text-align: center"><span style="color: #9E0028">'+top1+'</span> <span style="color: #009E28">'+top2+'</span></pre>'+
-          '<pre style="column-count: 2; column-gap: 1em;column-width: 10em;-moz-column-width: 10em;-webkit-column-width: 10em;-moz-column-gap: 1em;-webkit-column-gap: 1em; width: 45em; text-align: center; margin: 20px auto;">'+outputstrings.join('\n')+'</pre>'//+document.getElementById('all').innerHTML;
-        document.getElementById('stats').innerHTML = total+" strings genetically engineered.";
-      }
-      stop = setInterval(function () { go() }, 50);
-    </script>
-    <pre style="margin: 40px; font-size: 8em; font-family: monospace; text-align: center" id="output"></pre>
-    <div style="font-size: 2em; font-family: monospace; text-align: center" id="stats"></div>
-    <div id="all"></div>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
   </body>
 </html>
